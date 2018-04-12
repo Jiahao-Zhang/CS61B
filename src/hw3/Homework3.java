@@ -1,9 +1,5 @@
 package hw3;
 
-import com.sun.jndi.url.iiopname.iiopnameURLContextFactory;
-
-import javafx.util.converter.NumberStringConverter;
-
 /* Homework3.java */
 
 public class Homework3 {

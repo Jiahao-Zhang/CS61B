@@ -153,7 +153,6 @@ public class SList {
    **/
 
   public String toString() {
-    int i;
     Object obj;
     String result = "[  ";
 
