@@ -8,7 +8,8 @@ package hw5;
  **/
 public class Set {
   /* Fill in the data fields here. */
-
+	protected int size;
+	protected List list;
   /**
    * Set ADT invariants:
    *  1)  The Set's elements must be precisely the elements of the List.
@@ -24,6 +25,8 @@ public class Set {
    **/
   public Set() { 
     // Your solution here.
+	  list = new DList();
+	  size = 0;
   }
 
   /**
@@ -33,7 +36,7 @@ public class Set {
    **/
   public int cardinality() {
     // Replace the following line with your solution.
-    return 0;
+    return size;
   }
 
   /**
@@ -46,6 +49,30 @@ public class Set {
    **/
   public void insert(Comparable c) {
     // Your solution here.
+	  ListNode head = list.front();
+	  ListNode temp = head;
+	  try {
+		while(temp.isValidNode()){
+			if(c.compareTo(temp.item)>0){
+				temp = temp.next();
+			}else if(c.compareTo(temp.item)==0){
+				return;
+			}else{
+				break;
+			}  
+		  }
+		if(!temp.isValidNode()){
+			list.insertBack(c);
+			size++;
+		}else{
+			temp.insertBefore(c);
+			size++;
+		}
+		
+	} catch (InvalidNodeException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
   }
 
   /**
@@ -65,6 +92,46 @@ public class Set {
    **/
   public void union(Set s) {
     // Your solution here.
+	  ListNode sNode = s.list.front();
+	  ListNode thisNode = list.front();
+	  while(sNode.isValidNode()&&thisNode.isValidNode()){
+		  if(((Comparable)(sNode.item)).compareTo((Comparable)(thisNode.item))>0){
+			  try {
+				thisNode = thisNode.next();
+			} catch (InvalidNodeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		  }else if(((Comparable)(sNode.item)).compareTo((Comparable)(thisNode.item))==0){
+			  try {
+				sNode = sNode.next();
+				thisNode = thisNode.next();
+			} catch (InvalidNodeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		  }else{
+			  try {
+				thisNode.insertBefore(sNode.item);
+				size++;
+				sNode = sNode.next();
+			} catch (InvalidNodeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		  }
+	  }
+	  while(sNode.isValidNode()){
+		  try {
+			list.insertBack(sNode.item);
+			size++;
+			sNode = sNode.next();
+		} catch (InvalidNodeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	  }
+	  
   }
 
   /**
@@ -82,6 +149,49 @@ public class Set {
    **/
   public void intersect(Set s) {
     // Your solution here.
+	  ListNode sNode = s.list.front();
+	  ListNode thisNode = list.front();
+	  while(sNode.isValidNode()&&thisNode.isValidNode()){
+		  if(((Comparable)(sNode.item)).compareTo((Comparable)(thisNode.item))>0){
+			  try {
+				ListNode tempNode = thisNode;
+				thisNode = thisNode.next();
+				tempNode.remove();
+				size--;
+				
+			} catch (InvalidNodeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		  }else if(((Comparable)(sNode.item)).compareTo((Comparable)(thisNode.item))<0){
+			  try {
+				sNode = sNode.next();
+			} catch (InvalidNodeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		  }else{
+			  try {
+				thisNode = thisNode.next();
+				sNode = sNode.next();
+			} catch (InvalidNodeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			  
+		  }
+	  }
+	  while(thisNode.isValidNode()){
+		  try {
+			 ListNode tempNode = thisNode;
+			 thisNode = thisNode.next();
+			tempNode.remove();
+			size--;
+		} catch (InvalidNodeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	  }
   }
 
   /**
@@ -101,35 +211,127 @@ public class Set {
    **/
   public String toString() {
     // Replace the following line with your solution.
-    return "";
+	String string = "{";
+	if(!list.front().isValidNode())
+		return "{  }";
+	ListNode node = list.front();
+	while(node.isValidNode()){
+		string+="  "+node.item;
+		try {
+			node = node.next();
+		} catch (InvalidNodeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	return string+"  "+"}";
   }
 
   public static void main(String[] argv) {
-    Set s = new Set();
-    s.insert(new Integer(3));
-    s.insert(new Integer(4));
-    s.insert(new Integer(3));
-    System.out.println("Set s = " + s);
+	  Set s = new Set();
+	    s.insert(new Integer(3));
+	    s.insert(new Integer(4));
+	    s.insert(new Integer(3));
+	    System.out.println("Set s = " + s);
 
-    Set s2 = new Set();
-    s2.insert(new Integer(4));
-    s2.insert(new Integer(5));
-    s2.insert(new Integer(5));
-    System.out.println("Set s2 = " + s2);
+	    Set s2 = new Set();
+	    s2.insert(new Integer(4));
+	    s2.insert(new Integer(5));
+	    s2.insert(new Integer(5));
+	    System.out.println("Set s2 = " + s2);
 
-    Set s3 = new Set();
-    s3.insert(new Integer(5));
-    s3.insert(new Integer(3));
-    s3.insert(new Integer(8));
-    System.out.println("Set s3 = " + s3);
+	    Set s3 = new Set();
+	    s3.insert(new Integer(5));
+	    s3.insert(new Integer(3));
+	    s3.insert(new Integer(8));
+	    System.out.println("Set s3 = " + s3);
 
-    s.union(s2);
-    System.out.println("After s.union(s2), s = " + s);
 
-    s.intersect(s3);
-    System.out.println("After s.intersect(s3), s = " + s);
+	    s.union(s2);
+	    System.out.println("After s.union(s2), s = " + s);
 
-    System.out.println("s.cardinality() = " + s.cardinality());
-    // You may want to add more (ungraded) test code here.
+	    s.union(s3);
+	    System.out.println("After s.union(s3), s = " + s);
+
+
+	    Set s4 = new Set();
+	    s4.insert(new Integer(3));
+	    s4.insert(new Integer(2));
+	    s4.insert(new Integer(1));
+	    System.out.println("Set s4 = " + s4);
+
+	    Set s5 = new Set();
+	    System.out.println("Set s5 = " + s5);
+
+	    s4.union(s5);
+	    System.out.println("After s4.union(s5), s4 = " + s4);
+
+	    Set s6 = new Set();
+	    System.out.println("Set s6 = " + s6);
+
+	    Set s7 = new Set();
+	    s7.insert(new Integer(3));
+	    s7.insert(new Integer(2));
+	    s7.insert(new Integer(1));
+	    System.out.println("Set s7 = " + s7);
+
+	    s6.union(s7);
+	    System.out.println("After s6.union(s7), s6 = " + s6);
+
+	    s6.intersect(s4);
+	    System.out.println("After s6.intersect(s4), s6 = " + s6);
+
+	    Set s8 = new Set();
+	    System.out.println("Set s8 = " + s8);
+
+	    Set s9 = new Set();
+	    s9.insert(new Integer(3));
+	    s9.insert(new Integer(2));
+	    s9.insert(new Integer(1));
+	    System.out.println("Set s9 = " + s9);
+
+	    Set s10 = new Set();
+	    System.out.println("Set s10 = " + s10);
+
+	    s8.intersect(s9);
+	    System.out.println("After s8.intersect(s9), s8 = " + s8);
+
+	    s10.intersect(s8);
+	    System.out.println("After s10.intersect(s8), s10 = " + s10);
+
+	    s10.intersect(s9);
+	    System.out.println("After s10.intersect(s9), s10 = " + s10);
+
+	    Set s11 = new Set();
+	    s11.insert(new Integer(4));
+	    s11.insert(new Integer(8));
+	    s11.insert(new Integer(5));
+	    System.out.println("Set s11 = " + s11);
+	    Set s14 = s11;
+
+	    Set s12 = new Set();
+	    s12.insert(new Integer(1));
+	    s12.insert(new Integer(3));
+	    s12.insert(new Integer(5));
+	    s12.insert(new Integer(7));
+	    s12.insert(new Integer(9));
+	    System.out.println("Set s12 = " + s12);
+	    Set s13 = s12;
+
+	    s11.intersect(s12);
+	    System.out.println("After s11.intersect(s12), s11 = " + s11);
+
+	    System.out.println("Set s13 = " + s13);
+
+	    System.out.println("Set s14 = " + s14);
+
+	    s13.intersect(s12);
+	    System.out.println("After s13.intersect(s12), s13 = " + s13);
+
+	    s13.intersect(s14);
+	    System.out.println("After s13.intersect(s14), s13 = " + s13);
+
+
+	    System.out.println("s13.cardinality() = " + s13.cardinality());
   }
 }
