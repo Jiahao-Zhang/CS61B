@@ -11,9 +11,9 @@ package hw3;
  *  @author Kathy Yelick and Jonathan Shewchuk
  */
 
-class SListNode {
-  Object item;
-  SListNode next;
+public class SListNode {
+  public Object item;
+  public SListNode next;
 
 
   /**
@@ -21,7 +21,7 @@ class SListNode {
    *  item "obj", whose next list node is to be "next".
    */
 
-  SListNode(Object obj, SListNode next) {
+  public SListNode(Object obj, SListNode next) {
     item = obj;
     this.next = next;
   }
@@ -31,7 +31,7 @@ class SListNode {
    *  item "obj".
    */
 
-  SListNode(Object obj) {
+  public SListNode(Object obj) {
     this(obj, null);
   }
 }

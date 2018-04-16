@@ -24,7 +24,7 @@ public class SListNode extends ListNode {
    *  @param l the list this node is in.
    *  @param n the node following this node.
    */
-  SListNode(Object i, SList l, SListNode n) {
+  public SListNode(Object i, SList l, SListNode n) {
     item = i;
     myList = l;
     next = n;

@@ -1,5 +1,6 @@
 package hw3;
 
+
 /* SList.java */
 
 /**
@@ -275,4 +276,6 @@ public class SList {
     TestHelper.verify(lst1.toString().equals("[  5  6  7  ]"),
 		      "insertFront after insertEnd failed");
   }
+
+
 }
