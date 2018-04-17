@@ -61,6 +61,20 @@ public class Homework6Test {
     // that counts the number of collisions--or better yet, also prints
     // a histograph of the number of entries in each bucket.  Call this method
     // from here.
+   // System.out.println(table.find(randomBoard()));
+    table.makeEmpty();
+    System.out.println("size:"+table.size());
+    table.insert("1", "a");
+    table.insert("2", "b");
+    table.insert("3", "c");
+    table.insert("2", "d");
+    System.out.println(table.find("1").value);
+    System.out.println(table.find("2").value);
+    System.out.println("size:"+table.size());
+    table.remove("2");
+    System.out.println(table.find("2").value);
+    System.out.println("size:"+table.size());
+    
   }
 
 }

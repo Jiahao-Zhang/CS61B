@@ -2,7 +2,6 @@
 
 package hw6;
 
-import java.math.BigInteger;
 
 import hw5.InvalidNodeException;
 import hw5.ListNode;
@@ -26,6 +25,7 @@ public class HashTableChained implements Dictionary {
    *  Place any data fields here.
    **/
 	private int size;
+	private int length = 0;
 	private SList[] sList;
 
 
@@ -42,10 +42,19 @@ public class HashTableChained implements Dictionary {
 	  }
 	  this.size = sizeEstimate;
 	  sList = new SList[size];
+	  for(int i = 0;i<size;i++){
+		  sList[i] = new SList();
+	  }
 	  
   }
 
   private boolean isPrime(int number){
+	  if(number<=1){
+		  return false;
+	  }
+	  if(number == 2||number==3){
+		  return true;
+	  }
 	  int k = (int) Math.sqrt((double)number);
 	  for(int i = 2;i<=k;i++){
 		  if(number%i==0){
@@ -77,7 +86,7 @@ public class HashTableChained implements Dictionary {
   int compFunction(int code) {
     // Replace the following line with your solution.
 	
-    return 88;
+    return Math.abs(code)%size;
   }
 
   /** 
@@ -89,7 +98,8 @@ public class HashTableChained implements Dictionary {
 
   public int size() {
     // Replace the following line with your solution.
-    return 0;
+	  
+    return length;
   }
 
   /** 
@@ -100,8 +110,10 @@ public class HashTableChained implements Dictionary {
 
   public boolean isEmpty() {
     // Replace the following line with your solution.
-	
-    return true;
+	if(length==0)
+		return true;
+	else
+		return false;
   }
 
   /**
@@ -122,7 +134,8 @@ public class HashTableChained implements Dictionary {
 	Entry entry = new Entry();
 	entry.key = key;
 	entry.value = value;
-	sList[key.hashCode()].insertBack(entry);
+	sList[compFunction(key.hashCode())].insertBack(entry);
+	length++;
     return entry;
   }
 
@@ -140,8 +153,8 @@ public class HashTableChained implements Dictionary {
 
   public Entry find(Object key) {
     // Replace the following line with your solution.
-	ListNode head = this.sList[key.hashCode()].front();
-	while(head!=null){
+	ListNode head = this.sList[compFunction(key.hashCode())].front();
+	while(head.isValidNode()){
 		try {
 			if(((Entry)head.item()).key.equals(key)){
 				 return ((Entry)head.item());
@@ -175,12 +188,14 @@ public class HashTableChained implements Dictionary {
 
   public Entry remove(Object key) {
     // Replace the following line with your solution.
-	ListNode head = this.sList[key.hashCode()].front();
-	while(head!=null){
+	ListNode head = this.sList[compFunction(key.hashCode())].front();
+	while(head.isValidNode()){
 		try {
 			if(((Entry)head.item()).key.equals(key)){
+				 Entry temp = (Entry)(head.item());
 				 head.remove();
-				 return ((Entry)head.item());
+				 length--;
+				 return temp;
 			}
 		} catch (InvalidNodeException e) {
 			// TODO Auto-generated catch block
@@ -203,6 +218,11 @@ public class HashTableChained implements Dictionary {
   public void makeEmpty() {
     // Your solution here.
 	  sList = new SList[size];
+	  for(int i = 0;i<size;i++){
+		  sList[i] = new SList();
+	  }
+	  length = 0;
+	  
   }
 
 }
