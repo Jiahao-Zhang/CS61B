@@ -29,6 +29,9 @@ package pj1;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import hw4.DList;
+import hw4.DListNode;
+
 @SuppressWarnings("rawtypes")
 public class RunIterator implements Iterator {
 
@@ -36,7 +39,8 @@ public class RunIterator implements Iterator {
    *  Define any variables associated with a RunIterator object here.
    *  These variables MUST be private.
    */
-
+	private DListNode now;
+	private DList PixelList;
 
 
 
@@ -54,8 +58,11 @@ public class RunIterator implements Iterator {
   // constructor that you want so that your RunLengthEncoding.iterator()
   // implementation can construct a RunIterator that points to the first run of
   // the encoding.
-  RunIterator() {
+  RunIterator(RunLengthEncoding runLengthEncoding) {
     // Your solution here.  You may add parameters to the method signature.
+	  PixelList = runLengthEncoding.getPixelList();
+	  now = PixelList.front();
+	 
   }
 
   /**
@@ -66,6 +73,9 @@ public class RunIterator implements Iterator {
    */
   public boolean hasNext() {
     // Replace the following line with your solution.
+	if(now!=null&&now.item!=null){
+		return true;
+	}
     return false;
   }
 
@@ -96,7 +106,13 @@ public class RunIterator implements Iterator {
     // call to next() will return the subsequent run.
 
     // Replace the following line with your solution.
-    return new int[4];
+	int[] array = new int[4];
+	array[0] = ((Pixel)(now.item)).red;
+	array[1] = ((Pixel)(now.item)).green;
+	array[2] = ((Pixel)(now.item)).blue;
+	array[3] = ((Pixel)(now.item)).number;
+	now = PixelList.next(now);
+    return array;
   }
 
   /**

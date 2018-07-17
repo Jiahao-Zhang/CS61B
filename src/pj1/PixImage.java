@@ -98,6 +98,10 @@ public class PixImage {
     // Replace the following line with your solution.
     return array[x][y].blue;
   }
+  
+  public Pixel getPixel(int x, int y){
+	  return array[x][y];
+  }
 
   /**
    * setPixel() sets the pixel at coordinate (x, y) to specified red, green,
@@ -248,9 +252,84 @@ public class PixImage {
    */
   public PixImage sobelEdges() {
     // Replace the following line with your solution.
-    return this;
+	long[][] energy = new long[width][height];
+	PixImage image = new PixImage(width, height);
+	for(int i = 0;i<width;i++){
+		for(int j = 0;j<height;j++){
+			int gxRed = computeGradientX(i, j, "Red");
+			int gyRed = computeGradientY(i, j, "Red");
+			int gxBlue = computeGradientX(i, j, "Blue");
+			int gyBlue = computeGradientY(i, j, "Blue");
+			int gxGreen = computeGradientX(i, j, "Green");
+			int gyGreen = computeGradientY(i, j, "Green");
+			energy[i][j] = gxRed*gxRed+gyRed*gyRed+gxBlue*gxBlue+gyBlue*gyBlue+gxGreen*gxGreen+gyGreen*gyGreen;
+			short color = mag2gray(energy[i][j]);
+			image.setPixel(i, j, color,color,color);
+		}
+	}
+    return image;
     // Don't forget to use the method mag2gray() above to convert energies to
     // pixel intensities.
+  }
+  private int computeGradientX(int x,int y, String color){
+	  int gx = 0;
+	  short[][] array = new short[3][3];
+	  short[][] array2 = {{1,0,-1},{2,0,-2},{1,0,-1}};
+	  for(int i = -1;i<2;i++){
+		  for(int j = -1;j<2;j++){
+			  int row = x+i;
+			  int col = y+j;
+			  if(row<0){
+				  row = 0;
+			  }else if(row>=width){
+				  row = width-1;
+			  }
+			  if(col<0){
+				  col = 0;
+			  }else if(col>=height){
+				  col = height-1;
+			  }
+			  if(color.equals("Red")){
+				  array[i+1][j+1] = this.getRed(row, col);
+			  }else if(color.equals("Blue")){
+				  array[i+1][j+1] = this.getBlue(row, col);
+			  }else{
+				  array[i+1][j+1] = this.getGreen(row, col);
+			  }
+			  gx+=array[i+1][j+1]*array2[i+1][j+1];
+		  }
+	  }
+	  return gx;
+  }
+  private int computeGradientY(int x, int y, String color){
+	  int gy = 0;
+	  short[][] array = new short[3][3];
+	  short[][] array2 = {{1,2,1},{0,0,0},{-1,-2,-1}};
+	  for(int i = -1;i<2;i++){
+		  for(int j = -1;j<2;j++){
+			  int row = x+i;
+			  int col = y+j;
+			  if(row<0){
+				  row = 0;
+			  }else if(row>=width){
+				  row = width-1;
+			  }
+			  if(col<0){
+				  col = 0;
+			  }else if(col>=height){
+				  col = height-1;
+			  }
+			  if(color.equals("Red")){
+				  array[i+1][j+1] = this.getRed(row, col);
+			  }else if(color.equals("Blue")){
+				  array[i+1][j+1] = this.getBlue(row, col);
+			  }else{
+				  array[i+1][j+1] = this.getGreen(row, col);
+			  }
+			  gy+=array[i+1][j+1]*array2[i+1][j+1];
+		  }
+	  }
+	  return gy;
   }
 
 
@@ -392,9 +471,26 @@ class Pixel{
 	short red;
 	short blue;
 	short green;
+	int number = 0;
 	public Pixel(short red,short blue,short green){
 		this.red = red;
 		this.blue = blue;
 		this.green = green;
+	}
+	public Pixel(short red, short blue,short green,int number){
+		this.red = red;
+		this.blue = blue;
+		this.green = green;
+		this.number = number;
+	}
+	public boolean equals(Pixel p1){
+		if(p1==null){
+			return false;
+		}
+		if(this.red==p1.red&&this.blue==p1.blue&&this.green==p1.green){
+			return true;
+		}else{
+			return false;
+		}
 	}
 }

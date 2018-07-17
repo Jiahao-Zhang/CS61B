@@ -21,7 +21,10 @@
  *  See the README file accompanying this project for additional details.
  */
 package pj1;
-import java.util.Iterator;
+
+
+import hw4.DList;
+
 
 public class RunLengthEncoding implements Iterable {
 
@@ -29,8 +32,10 @@ public class RunLengthEncoding implements Iterable {
    *  Define any variables associated with a RunLengthEncoding object here.
    *  These variables MUST be private.
    */
-
-
+	private int width;
+	private int height;
+	private DList PixelList;
+	
 
 
   /**
@@ -48,6 +53,14 @@ public class RunLengthEncoding implements Iterable {
 
   public RunLengthEncoding(int width, int height) {
     // Your solution here.
+	  this.width = width;
+	  this.height = height;
+	  PixelList = new DList();
+	  short red = 0;
+	  short green = 0;
+	  short blue = 0;
+	  int number = width*height;
+	  PixelList.insertFront(new Pixel(red, green, blue, number));
   }
 
   /**
@@ -74,6 +87,13 @@ public class RunLengthEncoding implements Iterable {
   public RunLengthEncoding(int width, int height, int[] red, int[] green,
                            int[] blue, int[] runLengths) {
     // Your solution here.
+	  this.width = width;
+	  this.height = height;
+	  PixelList = new DList();
+	  for(int i = 0;i<red.length;i++){
+		  Pixel pixel = new Pixel((short)red[i], (short)blue[i], (short)green[i],runLengths[i]);
+		  PixelList.insertBack(pixel);
+	  }
   }
 
   /**
@@ -85,7 +105,7 @@ public class RunLengthEncoding implements Iterable {
 
   public int getWidth() {
     // Replace the following line with your solution.
-    return 1;
+    return width;
   }
 
   /**
@@ -96,7 +116,11 @@ public class RunLengthEncoding implements Iterable {
    */
   public int getHeight() {
     // Replace the following line with your solution.
-    return 1;
+    return height;
+  }
+  
+  public DList getPixelList(){
+	  return PixelList;
   }
 
   /**
@@ -108,7 +132,7 @@ public class RunLengthEncoding implements Iterable {
    */
   public RunIterator iterator() {
     // Replace the following line with your solution.
-    return null;
+    return new RunIterator(this);
     // You'll want to construct a new RunIterator, but first you'll need to
     // write a constructor in the RunIterator class.
   }
@@ -121,7 +145,22 @@ public class RunLengthEncoding implements Iterable {
    */
   public PixImage toPixImage() {
     // Replace the following line with your solution.
-    return new PixImage(1, 1);
+    PixImage image = new PixImage(width, height);
+    RunIterator iterator = this.iterator();
+    int row = 0;
+    int col = 0;
+    while(iterator.hasNext()){
+    	int[] array = iterator.next();
+    	for(int i = 0;i<array[3];i++){
+    		image.setPixel(row, col, (short)array[0], (short)array[1],(short)array[2]);
+    		col++;
+    		if(col==height){
+    			row++;
+    			col = 0;
+    		}
+    	}
+    }
+    return image;
   }
 
   /**
@@ -155,6 +194,33 @@ public class RunLengthEncoding implements Iterable {
   public RunLengthEncoding(PixImage image) {
     // Your solution here, but you should probably leave the following line
     // at the end.
+	this.width = image.getWidth();
+	this.height = image.getHeight();
+	PixelList = new DList();
+	Pixel[] array = new Pixel[width*height];
+	int index = 0;
+	for(int i = 0;i<width;i++){
+		for(int j = 0;j<height;j++){
+			array[index] = image.getPixel(i, j);
+			index++;
+		}
+	}
+	int slow = 0;
+	int fast = 1;
+	while(slow<width*height&&fast<width*height){
+		Pixel pixel = array[slow];
+		while(fast<width*height&&pixel.equals(array[fast])){
+			fast++;
+		}
+		int number = fast-slow;
+		PixelList.insertBack(new Pixel(array[slow].red, array[slow].blue, array[slow].green,number));
+		slow = fast;
+		fast++;
+	}
+	if(slow<width*height){
+		PixelList.insertBack(new Pixel(array[slow].red, array[slow].blue, array[slow].green,1));
+	}
+	
     check();
   }
 
@@ -188,6 +254,12 @@ public class RunLengthEncoding implements Iterable {
   public void setPixel(int x, int y, short red, short green, short blue) {
     // Your solution here, but you should probably leave the following line
     //   at the end.
+	Pixel pixel = new Pixel(red, blue, green);
+	RunIterator iterator = this.iterator();
+	while(iterator.hasNext()){
+		int[] array = iterator.next();
+		
+	}
     check();
   }
 
@@ -430,3 +502,5 @@ public class RunLengthEncoding implements Iterable {
            "Setting RLE4[1][0] = 1 fails.");
   }
 }
+
+
