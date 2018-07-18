@@ -23,7 +23,9 @@
 package pj1;
 
 
+
 import hw4.DList;
+import hw4.DListNode;
 
 
 public class RunLengthEncoding implements Iterable {
@@ -156,6 +158,9 @@ public class RunLengthEncoding implements Iterable {
     		col++;
     		if(col==height){
     			row++;
+    			if(row==width){
+    				return image;
+    			}
     			col = 0;
     		}
     	}
@@ -254,11 +259,79 @@ public class RunLengthEncoding implements Iterable {
   public void setPixel(int x, int y, short red, short green, short blue) {
     // Your solution here, but you should probably leave the following line
     //   at the end.
-	Pixel pixel = new Pixel(red, blue, green);
+	Pixel pixel = new Pixel(red, blue, green,1);
 	RunIterator iterator = this.iterator();
+	int location = 0;
+	if(x==0){
+		location = y+1;
+	}else if(x>0){
+		location = x*width+y+1;
+	}
 	while(iterator.hasNext()){
 		int[] array = iterator.next();
+		if(array[3]<=location){
+			location = location-array[3];
+		}else{
+			break;
+		}
+		if(location==0){
+			break;
+		}
+	}
+	DListNode now = null;
+	DListNode prev = null;
+	DListNode next = null;
+	if(iterator.getNow()==null){
+		now = PixelList.back();
+		next = null;
+		prev = PixelList.prev(now);
+	}else{
+		next = iterator.getNow();
+		now = PixelList.prev(next);
+		prev = PixelList.prev(now);
 		
+	}
+	
+	if(location==0){
+		if((!((Pixel)now.item).equals(pixel)&&next!=null&&!(pixel.equals((Pixel)next.item)))||next==null){
+			
+			PixelList.insertAfter(pixel, now);
+			((Pixel)now.item).number--;
+			if(((Pixel)now.item).number==0){
+				PixelList.remove(now);
+			}
+		}else if(next!=null&&pixel.equals((Pixel)next.item)){
+			((Pixel)next.item).number++;
+			((Pixel)now.item).number--;
+			if(((Pixel)now.item).number==0){
+				PixelList.remove(now);
+			}
+		}
+	}else if(location==1){
+		if((!((Pixel)now.item).equals(pixel)&&prev!=null&&!(pixel.equals((Pixel)prev.item)))||prev==null){
+			PixelList.insertBefore(pixel, now);
+			((Pixel)now.item).number--;
+			if(((Pixel)now.item).number==0){
+				PixelList.remove(now);
+			}
+		}else if(prev!=null&&pixel.equals((Pixel)prev.item)){
+			((Pixel)prev.item).number++;
+			((Pixel)now.item).number--;
+			if(((Pixel)now.item).number==0){
+				PixelList.remove(now);
+			}
+		}
+	}else{
+		if(!((Pixel)now.item).equals(pixel)){
+			Pixel first = new Pixel(((Pixel)now.item).red, ((Pixel)now.item).blue, ((Pixel)now.item).green,location-1);
+			Pixel last = new Pixel(((Pixel)now.item).red, ((Pixel)now.item).blue, ((Pixel)now.item).green,((Pixel)now.item).number-location);
+			PixelList.insertAfter(first, now);
+			DListNode temp = PixelList.next(now);
+			PixelList.insertAfter(pixel,temp);
+			temp = PixelList.next(temp);
+			PixelList.insertAfter(last, temp);
+			PixelList.remove(now);
+		}
 	}
     check();
   }

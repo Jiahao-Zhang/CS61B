@@ -29,6 +29,8 @@ package pj1;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+
+
 import hw4.DList;
 import hw4.DListNode;
 
@@ -123,5 +125,9 @@ public class RunIterator implements Iterator {
    */
   public void remove() {
     throw new UnsupportedOperationException();
+  }
+  
+  public DListNode getNow(){
+	  return now;
   }
 }
