@@ -236,6 +236,25 @@ public class RunLengthEncoding implements Iterable {
    */
   public void check() {
     // Your solution here.
+	  RunIterator iterator = this.iterator();
+	  int sum = 0;
+	  int[] previous = null;
+	  while(iterator.hasNext()){
+		  int[] now = iterator.next();
+		  sum+=now[3];
+		  if(previous==null){
+			  previous = now;
+			  continue;
+		  }
+		  if(previous[0]==now[0]&&previous[1]==now[1]&&previous[2]==now[2]){
+			  System.err.println("Color same");
+			  return;
+		  }
+		  previous = now;
+	  }
+	  if(sum!=width*height){
+		  System.err.println("Length different");
+	  }
   }
 
 
@@ -261,12 +280,7 @@ public class RunLengthEncoding implements Iterable {
     //   at the end.
 	Pixel pixel = new Pixel(red, blue, green,1);
 	RunIterator iterator = this.iterator();
-	int location = 0;
-	if(x==0){
-		location = y+1;
-	}else if(x>0){
-		location = x*width+y+1;
-	}
+	int location = x*width+y+1;
 	while(iterator.hasNext()){
 		int[] array = iterator.next();
 		if(array[3]<=location){
@@ -294,30 +308,49 @@ public class RunLengthEncoding implements Iterable {
 	
 	if(location==0){
 		if((!((Pixel)now.item).equals(pixel)&&next!=null&&!(pixel.equals((Pixel)next.item)))||next==null){
-			
-			PixelList.insertAfter(pixel, now);
 			((Pixel)now.item).number--;
 			if(((Pixel)now.item).number==0){
+				if(prev!=null&&pixel.equals((Pixel)prev.item)){
+					((Pixel)prev.item).number++;
+				}else{
+					PixelList.insertAfter(pixel, now);
+				}
 				PixelList.remove(now);
+			}else{
+				PixelList.insertAfter(pixel, now);
 			}
-		}else if(next!=null&&pixel.equals((Pixel)next.item)){
+		}else if(next!=null&&pixel.equals((Pixel)(next.item))){
 			((Pixel)next.item).number++;
 			((Pixel)now.item).number--;
 			if(((Pixel)now.item).number==0){
+				if(prev!=null&&((Pixel)prev.item).equals((Pixel)next.item)){
+					((Pixel)prev.item).number+=((Pixel)next.item).number;
+					PixelList.remove(next);
+				}
 				PixelList.remove(now);
 			}
 		}
 	}else if(location==1){
 		if((!((Pixel)now.item).equals(pixel)&&prev!=null&&!(pixel.equals((Pixel)prev.item)))||prev==null){
-			PixelList.insertBefore(pixel, now);
 			((Pixel)now.item).number--;
 			if(((Pixel)now.item).number==0){
+				if(next!=null&&pixel.equals((Pixel)next.item)){
+					((Pixel)next.item).number++;
+				}else{
+					PixelList.insertBefore(pixel, now);
+				}
 				PixelList.remove(now);
+			}else{
+				PixelList.insertBefore(pixel, now);
 			}
-		}else if(prev!=null&&pixel.equals((Pixel)prev.item)){
+		}else if(prev!=null&&pixel.equals((Pixel)(prev.item))){
 			((Pixel)prev.item).number++;
 			((Pixel)now.item).number--;
 			if(((Pixel)now.item).number==0){
+				if(prev!=null&&((Pixel)prev.item).equals((Pixel)next.item)){
+					((Pixel)prev.item).number+=((Pixel)next.item).number;
+					PixelList.remove(next);
+				}
 				PixelList.remove(now);
 			}
 		}
@@ -333,6 +366,7 @@ public class RunLengthEncoding implements Iterable {
 			PixelList.remove(now);
 		}
 	}
+	System.out.println(toPixImage().toString());
     check();
   }
 

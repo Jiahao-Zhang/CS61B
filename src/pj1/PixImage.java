@@ -132,7 +132,14 @@ public class PixImage {
    */
   public String toString() {
     // Replace the following line with your solution.
-    return "";
+	String str = "";
+	for(int i = 0;i<width;i++){
+		for(int j = 0;j<height;j++){
+			str+="("+array[i][j].red+","+array[i][j].green+","+array[i][j].blue+")"+" ";
+		}
+		str+="\n";
+	}
+    return str ;
   }
 
   /**
